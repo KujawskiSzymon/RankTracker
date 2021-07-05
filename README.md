@@ -7,7 +7,7 @@ ROADMAP
 
 [X] Adding new players to game
 
-[] Player history
+[X] Player history
 
 [] Create Match
 
