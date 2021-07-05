@@ -12,6 +12,6 @@ namespace RankTracker.Models
 
         public string Title { get; set; }
 
-        public PlayerHistory PlayerHistory { get; set; }
+        public List<PlayerHistory> PlayerHistory { get; set; }
     }
 }

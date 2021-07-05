@@ -25,11 +25,12 @@
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16" />
                             <StackLayout.GestureRecognizers>
-                                <TapGestureRecognizer>
-                                    NumberOfTapsRequired="1"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GameDetailViewModel}}, Path=GameTapped}}"		
+                                <TapGestureRecognizer 
+                                NumberOfTapsRequired="1"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:GameDetailViewModel}}, Path=PlayerTapped}"		
                                 CommandParameter="{Binding .}">
                                 </TapGestureRecognizer>
+                             
                             </StackLayout.GestureRecognizers>
                         </StackLayout>
                     </DataTemplate>

@@ -8,5 +8,6 @@ namespace RankTracker.Static
    public static class AppInfoStatic
     {
         public static Game currentGame;
+        public static Player currentPlayer;
     }
 }

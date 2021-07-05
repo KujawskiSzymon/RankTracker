@@ -20,11 +20,14 @@ namespace RankTracker.ViewModels
         public Command AddPlayerCommand { get; }
         public Command LoadPlayersCommand { get; }
 
+        public Command<Player> PlayerTapped { get; }
+
         public GameDetailViewModel()
         {
             Players = new ObservableCollection<Player>();
             AddPlayerCommand = new Command(OnAddPlayer);
             LoadPlayersCommand = new Command(async () => await ExecuteLoadGamesCommand());
+            PlayerTapped = new Command<Player>(OnPlayerSelected);
         }
 
         public string Name
@@ -49,6 +52,7 @@ namespace RankTracker.ViewModels
             {
                 gameId = value;
                 LoadGameId(value);
+               
             }
         }
 
@@ -80,6 +84,15 @@ namespace RankTracker.ViewModels
         public void OnAppearing()
         {
             IsBusy = true;
+        }
+
+        async void OnPlayerSelected(Player item)
+        {
+            if (item == null)
+                return;
+
+            // This will push the ItemDetailPage onto the navigation stack
+            await Shell.Current.GoToAsync($"{nameof(PlayerDetailPage)}?{nameof(PlayerDetailViewModel.PlayerId)}={item.Id}");
         }
 
         public async void LoadGameId(string itemId)

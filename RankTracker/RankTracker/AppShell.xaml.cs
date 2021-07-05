@@ -14,6 +14,7 @@ namespace RankTracker
             Routing.RegisterRoute(nameof(GameDetailPage), typeof(GameDetailPage));
             Routing.RegisterRoute(nameof(NewGamePage), typeof(NewGamePage));
             Routing.RegisterRoute(nameof(NewPlayerPage), typeof(NewPlayerPage));
+            Routing.RegisterRoute(nameof(PlayerDetailPage), typeof(PlayerDetailPage));
         }
 
     }

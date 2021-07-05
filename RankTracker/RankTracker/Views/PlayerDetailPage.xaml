@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:RankTracker.ViewModels" xmlns:model="clr-namespace:RankTracker.Models" x:DataType="local:PlayerDetailViewModel"
+             x:Class="RankTracker.Views.PlayerDetailPage"
+             Title="{Binding Name}">
+
+        <StackLayout Spacing="20" Padding="15">
+            <Label Text="History:" FontSize="Medium" />
+        <RefreshView x:DataType="local:PlayerDetailViewModel"  Command="{Binding LoadPlayerHistoryCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+            <CollectionView x:Name="PlayerHistoryListView"
+                ItemsSource="{Binding PlayerHistory}"
+                SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="10" x:DataType="model:PlayerHistory">
+                            <Label Text="{Binding Date}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" />
+                            <Label Text="{Binding RankHistory}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" />
+                            
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </StackLayout>
+</ContentPage>

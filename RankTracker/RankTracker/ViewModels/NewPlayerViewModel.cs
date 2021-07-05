@@ -58,7 +58,7 @@ namespace RankTracker.ViewModels
                 Id = Guid.NewGuid().ToString(),
                 Name = Name,
                 Rank = Int32.Parse(Rank),
-                PlayerHistory = new PlayerHistory()
+                PlayerHistory = new List<PlayerHistory>()
                 };
               
                 await GamesStore.AddPlayerAsync(game,newItem);

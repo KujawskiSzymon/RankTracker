@@ -6,7 +6,7 @@ namespace RankTracker.Models
 {
     public class PlayerHistory
     {
-        public List<int> RankHistory;
-        public List<DateTime> DateTimes;
+        public int RankHistory { get; set; }
+        public DateTime Date { get; set; }
     }
 }
