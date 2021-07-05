@@ -26,6 +26,11 @@ namespace RankTracker.Services
 
             return await Task.FromResult(true);
         }
+        public async Task<bool> AddPlayerAsync(Game game, Player p)
+        {
+            game.Players.Add(p);
+            return await Task.FromResult(true);
+        }
 
         public async Task<bool> UpdateGameAsync(Game game)
         {

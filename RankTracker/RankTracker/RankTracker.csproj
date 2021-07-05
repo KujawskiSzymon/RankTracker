@@ -17,8 +17,15 @@
     <Compile Update="Views\GamesPage.xaml.cs">
       <DependentUpon>GamesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\NewPlayerPage.xaml.cs">
+      <DependentUpon>NewPlayerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\NewGamePage.xaml.cs">
       <DependentUpon>NewGamePage.xaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\NewFolder\" />
   </ItemGroup>
 </Project>

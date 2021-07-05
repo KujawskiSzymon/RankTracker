@@ -1,6 +1,8 @@
 ﻿using RankTracker.Models;
+using RankTracker.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,8 +14,18 @@ namespace RankTracker.ViewModels
     {
         private string gameId;
         private string name;
-        private List<Player> players;
+        private ObservableCollection<Player> players;
         public string Id { get; set; }
+
+        public Command AddPlayerCommand { get; }
+        public Command LoadPlayersCommand { get; }
+
+        public GameDetailViewModel()
+        {
+            Players = new ObservableCollection<Player>();
+            AddPlayerCommand = new Command(OnAddPlayer);
+            LoadPlayersCommand = new Command(async () => await ExecuteLoadGamesCommand());
+        }
 
         public string Name
         {
@@ -21,7 +33,7 @@ namespace RankTracker.ViewModels
             set => SetProperty(ref name, value);
         }
 
-        public List<Player>Players
+        public ObservableCollection<Player> Players
         {
             get => players;
             set => SetProperty(ref players, value);
@@ -40,19 +52,59 @@ namespace RankTracker.ViewModels
             }
         }
 
+        async Task ExecuteLoadGamesCommand()
+        {
+            IsBusy = true;
+
+            try
+            {
+                Players.Clear();
+                Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
+                var players = game.Players;
+                foreach (var p in players)
+                {
+                    Players.Add(p);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public void OnAppearing()
+        {
+            IsBusy = true;
+        }
+
         public async void LoadGameId(string itemId)
         {
             try
             {
-                var item = await DataStore.GetGameAsync(itemId);
+                Players.Clear();
+                var item = await GamesStore.GetGameAsync(itemId);
                 Id = item.Id;
                 Name = item.Name;
-                Players = item.Players;
+               var p = item.Players;
+                foreach (var player in p)
+                {
+                    Players.Add(player);
+                }
+                Static.AppInfoStatic.currentGame = item;
             }
             catch (Exception)
             {
                 Debug.WriteLine("Failed to Load Item");
             }
+        }
+        private async void OnAddPlayer(object obj)
+        { 
+            await Shell.Current.GoToAsync(nameof(NewPlayerPage));
         }
     }
 }

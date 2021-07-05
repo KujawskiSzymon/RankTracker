@@ -35,7 +35,7 @@ namespace RankTracker.ViewModels
             try
             {
                 Games.Clear();
-                var games = await DataStore.GetGamesAsync(true);
+                var games = await GamesStore.GetGamesAsync(true);
                 foreach (var item in games)
                 {
                     Games.Add(item);

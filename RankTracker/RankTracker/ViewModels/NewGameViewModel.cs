@@ -30,6 +30,7 @@ namespace RankTracker.ViewModels
         {
             get => name;
             set => SetProperty(ref name, value);
+            
         }
 
       
@@ -52,7 +53,7 @@ namespace RankTracker.ViewModels
                 Players = new List<Player>()
             };
 
-            await DataStore.AddGameAsync(newItem);
+            await GamesStore.AddGameAsync(newItem);
 
             // This will pop the current page off the navigation stack
             await Shell.Current.GoToAsync("..");
