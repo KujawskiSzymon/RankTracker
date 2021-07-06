@@ -11,5 +11,10 @@ namespace RankTracker.Views
             InitializeComponent();
             BindingContext = new GameDetailViewModel();
         }
+
+        private void ImageButton_Clicked(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace RankTracker.ViewModels
         public string Id { get; set; }
 
         public Command AddPlayerCommand { get; }
+        public Command CreateMatchCommand { get; }
         public Command LoadPlayersCommand { get; }
 
         public Command<Player> PlayerTapped { get; }
@@ -26,6 +27,7 @@ namespace RankTracker.ViewModels
         {
             Players = new ObservableCollection<Player>();
             AddPlayerCommand = new Command(OnAddPlayer);
+            CreateMatchCommand = new Command(OnCreateMatch);
             LoadPlayersCommand = new Command(async () => await ExecuteLoadGamesCommand());
             PlayerTapped = new Command<Player>(OnPlayerSelected);
         }
@@ -118,6 +120,10 @@ namespace RankTracker.ViewModels
         private async void OnAddPlayer(object obj)
         { 
             await Shell.Current.GoToAsync(nameof(NewPlayerPage));
+        }
+        private async void OnCreateMatch(object obj)
+        {
+            await Shell.Current.GoToAsync($"{nameof(SelectPlayersPage)}?{nameof(SelectPlayersViewModel.GameId)}={Static.AppInfoStatic.currentGame.Id}");
         }
     }
 }

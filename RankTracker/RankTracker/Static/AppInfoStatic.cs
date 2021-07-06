@@ -9,5 +9,6 @@ namespace RankTracker.Static
     {
         public static Game currentGame;
         public static Player currentPlayer;
+        public static List<PlayerView> currentPlayersInMatch;
     }
 }

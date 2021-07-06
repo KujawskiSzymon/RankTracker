@@ -8,8 +8,8 @@
     </ContentPage.ToolbarItems>
     <StackLayout Spacing="20" Padding="15">
         <Label Text="Players:" FontSize="Medium" />
-
-        <RefreshView x:DataType="local:GameDetailViewModel"  Command="{Binding LoadPlayersCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <AbsoluteLayout>
+            <RefreshView x:DataType="local:GameDetailViewModel"  Command="{Binding LoadPlayersCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
             <CollectionView x:Name="PlayersListView"
                 ItemsSource="{Binding Players}"
                 SelectionMode="None">
@@ -37,6 +37,9 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
+            <ImageButton Source="add.png" AbsoluteLayout.LayoutFlags="PositionProportional"  
+            AbsoluteLayout.LayoutBounds=".95,.95,80,80"  BackgroundColor="Transparent" Command="{Binding CreateMatchCommand}"/>
+        </AbsoluteLayout>
     </StackLayout>
-    
+   
 </ContentPage>
