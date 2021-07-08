@@ -12,6 +12,8 @@ namespace RankTracker.Models
 
         public string Title { get; set; }
 
+        public int RankRated { get; set; }
+
         public List<PlayerHistory> PlayerHistory { get; set; }
     }
 }

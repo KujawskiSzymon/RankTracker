@@ -50,7 +50,8 @@ namespace RankTracker.ViewModels
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = Name,
-                Players = new List<Player>()
+                Players = new List<Player>(),
+                Matches = new List<Match>()
             };
 
             await GamesStore.AddGameAsync(newItem);

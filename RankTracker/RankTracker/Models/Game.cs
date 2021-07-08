@@ -10,5 +10,6 @@ namespace RankTracker.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public List<Player> Players { get; set; }
+        public List<Match> Matches { get; set; }
     }
 }

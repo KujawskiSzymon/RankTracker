@@ -12,17 +12,11 @@ namespace RankTracker.Services
 
         public MockDataStore()
         {
-            List<int> ranksMock = new List<int> { 10, 20, -39, 10 };
-            List<DateTime> dateTimeMock = new List<DateTime>() { DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now };
-            PlayerHistory p = new PlayerHistory { Date = dateTimeMock[0], RankHistory = ranksMock[0] };
-            PlayerHistory p1 = new PlayerHistory { Date = dateTimeMock[1], RankHistory = ranksMock[1] };
-            PlayerHistory p2 = new PlayerHistory { Date = dateTimeMock[2], RankHistory = ranksMock[2] };
-            PlayerHistory p3= new PlayerHistory { Date = dateTimeMock[3], RankHistory = ranksMock[3] };
-            List<PlayerHistory> playerHistories = new List<PlayerHistory> { p, p1, p2, p3 };
+          
             games = new List<Game>()
             {
                 new Game { Id = Guid.NewGuid().ToString(), Name = "Crash Team Racing", Players= new List<Player>()
-                { new Player() {Id = Guid.NewGuid().ToString(), Name = "KalibeRaziel", Rank = 1200, PlayerHistory=playerHistories, Title = "TBA" } } },
+                { new Player() {Id = Guid.NewGuid().ToString(), Name = "KalibeRaziel", Rank = 1200, PlayerHistory=new List<PlayerHistory>(), Title = "TBA" }, new Player(){Id = Guid.NewGuid().ToString(), Name = "Test", Rank = 1200, PlayerHistory=new List<PlayerHistory>(), Title = "TBA" },new Player(){Id = Guid.NewGuid().ToString(), Name = "Leszek", Rank = 1000, PlayerHistory=new List<PlayerHistory>(), Title = "TBA" }},Matches = new List<Match>() },
                 
             };
         }
@@ -36,6 +30,22 @@ namespace RankTracker.Services
         public async Task<bool> AddPlayerAsync(Game game, Player p)
         {
             game.Players.Add(p);
+            return await Task.FromResult(true);
+        }
+        public async Task<bool> UpdatePlayerAsync(Player p)
+        {
+            var currentGame = games.Where((Game arg) => arg.Id == Static.AppInfoStatic.currentGame.Id).FirstOrDefault();
+            foreach(var player in currentGame.Players)
+            {
+                if (p.Id == player.Id)
+                {
+                    player.PlayerHistory = p.PlayerHistory;
+                    player.Rank = p.Rank;
+                    
+                }
+            }
+            Console.WriteLine("UPDATED PLAYER: "+p.Name);
+
             return await Task.FromResult(true);
         }
 
@@ -63,6 +73,10 @@ namespace RankTracker.Services
         public async Task<Player> GetPlayerAsync(Game game, string id)
         {
             return await Task.FromResult(game.Players.FirstOrDefault(s => s.Id == id));
+        }
+        public async Task<Player> GetPlayerByNameAsync(Game game, string name)
+        {
+            return await Task.FromResult(game.Players.FirstOrDefault(s => s.Name == name));
         }
 
         public async Task<IEnumerable<Game>> GetGamesAsync(bool forceRefresh = false)

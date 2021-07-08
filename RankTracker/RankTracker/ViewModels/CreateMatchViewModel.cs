@@ -1,4 +1,5 @@
 ﻿using RankTracker.Models;
+using RankTracker.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +32,41 @@ namespace RankTracker.ViewModels
 
         private async void OnCreateMatch()
         {
-            
+           // Static.AppInfoStatic.PlayersInMatch = new List<Player>();
+            for (int i = 0; i < Players.Count;i++)
+            {
+                for (int j = i + 1; j < Players.Count; j++)
+                {
+                    if (Convert.ToInt32(Players[i].points) > Convert.ToInt32(Players[j].points))
+                    {
+                        EloRating(Players[i].Name, Players[j].Name,40,1);
+                    }
+                    else if (Convert.ToInt32(Players[i].points) == Convert.ToInt32(Players[j].points))
+                    {
+                        EloRating(Players[i].Name, Players[j].Name, 40, 0.5);
+                    }
+                    else
+                    {
+                        EloRating(Players[i].Name, Players[j].Name, 40, -1);
+                    }
+                }
+            }
+            Match match = new Match() { Id = Guid.NewGuid().ToString(), Players = new List<Player>() };
+            foreach (var p in Players)
+            {
+               Player player = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame, p.Name);
+                player.Rank += player.RankRated;
+                PlayerHistory ph = new PlayerHistory() { Date = DateTime.UtcNow, RankHistory = player.RankRated };
+                player.RankRated = 0;
+                match.Players.Add(player);
+
+                player.PlayerHistory.Add(ph);
+              //  await GamesStore.UpdatePlayerAsync(player);
+            }
+            Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
+            game.Matches.Add(match);
+            await GamesStore.UpdateGameAsync(game);
+            await Shell.Current.GoToAsync($"{nameof(GamesPage)}");
         }
         private bool Validate()
         {
@@ -50,6 +85,40 @@ namespace RankTracker.ViewModels
 
         }
 
+        private async void EloRating(string playerNameA,string playerNameB,int K, double win)
+        {
+            Player PlayerA = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame,playerNameA);
+            Player PlayerB = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame,playerNameB);
+            double ProbPlayerA = Probability(PlayerA.Rank,PlayerB.Rank);
+            double ProbPlayerB = Probability(PlayerB.Rank, PlayerA.Rank);
+
+            if (win == 1)
+            {
+                double rankRatedA =  K * (1 - ProbPlayerA);
+                double rankRatedB =   K * (0 - ProbPlayerB);
+                PlayerA.RankRated += Convert.ToInt32(rankRatedA);
+                PlayerB.RankRated += Convert.ToInt32(rankRatedB);
+            }
+            else if (win == 0.5) {
+                double rankRatedA =  K * (0.5 - ProbPlayerA);
+                double rankRatedB = K * (0.5 - ProbPlayerB);
+                PlayerA.RankRated += Convert.ToInt32(rankRatedA);
+                PlayerB.RankRated += Convert.ToInt32(rankRatedB);
+            }
+            else
+            {
+                double rankRatedA =  K * (0 - ProbPlayerA);
+                double rankRatedB =  K * (1 - ProbPlayerB);
+                PlayerA.RankRated += Convert.ToInt32(rankRatedA);
+                PlayerB.RankRated += Convert.ToInt32(rankRatedB);
+            }
+        }
+
+        private double Probability(int rankA, int rankB)
+        {
+            double prob = 1 / (1 + Math.Pow(10, 1.0 * (rankA - rankB) / 400));
+            return prob;
+        }
 
     }
 }
