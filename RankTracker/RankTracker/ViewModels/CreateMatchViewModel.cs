@@ -67,7 +67,7 @@ namespace RankTracker.ViewModels
             Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
             game.Matches.Add(match);
             await GamesStore.UpdateGameAsync(game);
-            await Shell.Current.GoToAsync($"{nameof(GamesPage)}");
+            await Shell.Current.GoToAsync("../..");
         }
         private bool Validate()
         {
