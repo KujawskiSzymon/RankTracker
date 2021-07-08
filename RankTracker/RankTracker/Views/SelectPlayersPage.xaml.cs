@@ -22,13 +22,6 @@ namespace RankTracker.Views
         private void CheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
 
-            SelectPlayersViewModel vm = (SelectPlayersViewModel)BindingContext;
-            foreach(var x in vm.Players)
-            {
-                Console.WriteLine(x.ischecked);
-            }
-
-
         }
     }
 }

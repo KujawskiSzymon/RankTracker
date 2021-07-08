@@ -67,6 +67,7 @@ namespace RankTracker.ViewModels
         }
         private async void OnCreateMatch(object obj)
         {
+            Static.AppInfoStatic.currentPlayersInMatch = new List<PlayerView>();
             Static.AppInfoStatic.currentPlayersInMatch.Clear();
             foreach (var p in Players)
             {

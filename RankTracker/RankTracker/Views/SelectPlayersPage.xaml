@@ -7,7 +7,7 @@
         <ToolbarItem Text="Create Match" Command="{Binding CreateMatchCommand}" />
     </ContentPage.ToolbarItems>
     <StackLayout Spacing="20" Padding="15">
-        <Label Text="Players:" FontSize="Medium" />
+        <Label Text="Select Players:" FontSize="Medium" />
 
         <RefreshView BindingContext="{Binding .}" x:DataType="local:SelectPlayersViewModel"  IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
             <CollectionView x:Name="PlayersListView"
