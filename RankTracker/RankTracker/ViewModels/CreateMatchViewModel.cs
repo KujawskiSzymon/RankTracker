@@ -32,6 +32,7 @@ namespace RankTracker.ViewModels
 
         private async void OnCreateMatch()
         {
+            int K = setK();
            // Static.AppInfoStatic.PlayersInMatch = new List<Player>();
             for (int i = 0; i < Players.Count;i++)
             {
@@ -39,15 +40,15 @@ namespace RankTracker.ViewModels
                 {
                     if (Convert.ToInt32(Players[i].points) > Convert.ToInt32(Players[j].points))
                     {
-                        EloRating(Players[i].Name, Players[j].Name,40,1);
+                        EloRating(Players[i].Name, Players[j].Name,30,1);
                     }
                     else if (Convert.ToInt32(Players[i].points) == Convert.ToInt32(Players[j].points))
                     {
-                        EloRating(Players[i].Name, Players[j].Name, 40, 0.5);
+                        EloRating(Players[i].Name, Players[j].Name, 30, 0.5);
                     }
                     else
                     {
-                        EloRating(Players[i].Name, Players[j].Name, 40, -1);
+                        EloRating(Players[i].Name, Players[j].Name, 30, -1);
                     }
                 }
             }
@@ -114,10 +115,31 @@ namespace RankTracker.ViewModels
             }
         }
 
-        private double Probability(int rankA, int rankB)
+        private double Probability(double rankA, double rankB)
         {
-            double prob = 1 / (1 + Math.Pow(10, 1.0 * (rankA - rankB) / 400));
+            double prob = 1.0 * 1.0 / ( 1+ 1.0 * Math.Pow(10, 1.0 * (rankB - rankA) / 400));
             return prob;
+        }
+        private int setK()
+        {
+            int K;
+            if (Players.Count < 3)
+            {
+                K = 30;
+            }
+            else if (Players.Count >= 2 && Players.Count < 6)
+            {
+                K = 24;
+            }
+            else if (Players.Count >= 6 && Players.Count < 11)
+            {
+                K = 18;
+            }
+            else
+            {
+                K = 10;
+            }
+            return K;
         }
 
     }
