@@ -17,10 +17,10 @@ namespace RankTracker.ViewModels
             players = new ObservableCollection<PlayerMatchCreate>();
             foreach(var p in Static.AppInfoStatic.currentPlayersInMatch)
             {
-                PlayerMatchCreate player = new PlayerMatchCreate() { Name = p.name, points = 0 };
+                PlayerMatchCreate player = new PlayerMatchCreate() { Name = p.name, points = "0" };
                 players.Add(player);
             }
-            CreateMatchCommand = new Command(OnCreateMatch);
+            CreateMatchCommand = new Command(OnCreateMatch,Validate);
         }
 
         public ObservableCollection<PlayerMatchCreate> Players
@@ -29,9 +29,25 @@ namespace RankTracker.ViewModels
             set => SetProperty(ref players, value);
         }
 
-        private async void OnCreateMatch(object obj)
+        private async void OnCreateMatch()
         {
             
+        }
+        private bool Validate()
+        {
+            int value = 0;
+            foreach(var p in Players)
+                
+            {
+                if (Int32.TryParse(p.points, out value))
+                    continue;
+                else
+                    return false;
+
+            }
+           
+                return true;
+
         }
 
 

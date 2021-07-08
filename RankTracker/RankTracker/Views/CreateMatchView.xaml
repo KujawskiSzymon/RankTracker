@@ -20,7 +20,7 @@
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16" />
-                            <Entry Text="{Binding points,Mode=TwoWay}" />
+                            <Entry Text="{Binding points,Mode=TwoWay}" PropertyChanged="Entry_PropertyChanged" />
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

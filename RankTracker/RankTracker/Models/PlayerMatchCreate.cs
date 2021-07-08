@@ -7,6 +7,6 @@ namespace RankTracker.Models
     public class PlayerMatchCreate
     {
         public string Name { get; set; }
-        public int points { get; set; }
+        public string points { get; set; }
     }
 }

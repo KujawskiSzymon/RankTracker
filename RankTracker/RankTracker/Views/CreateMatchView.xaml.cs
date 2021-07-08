@@ -18,5 +18,11 @@ namespace RankTracker.Views
             InitializeComponent();
             BindingContext = new CreateMatchViewModel();
         }
+
+        private void Entry_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            CreateMatchViewModel vm = (CreateMatchViewModel)BindingContext;
+            vm.CreateMatchCommand.ChangeCanExecute();
+        }
     }
 }
