@@ -21,7 +21,8 @@ namespace RankTracker.Views
 
         private void CheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
-
+            SelectPlayersViewModel vm = (SelectPlayersViewModel)BindingContext;
+            vm.CreateMatchCommand.ChangeCanExecute();
         }
     }
 }

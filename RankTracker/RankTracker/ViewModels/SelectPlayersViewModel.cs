@@ -22,8 +22,10 @@ namespace RankTracker.ViewModels
         public SelectPlayersViewModel()
         {
             Players = new ObservableCollection<PlayerView>();
-            CreateMatchCommand = new Command(OnCreateMatch);
-            CheckPlayerCommand = new Command(OnCheck);
+            CreateMatchCommand = new Command(OnCreateMatch,Validate);
+            this.PropertyChanged +=
+                    (_, __) => CreateMatchCommand.ChangeCanExecute();
+            
         }
         public string GameId
         {
@@ -65,7 +67,7 @@ namespace RankTracker.ViewModels
                 Debug.WriteLine("Failed to Load Item");
             }
         }
-        private async void OnCreateMatch(object obj)
+        private async void OnCreateMatch()
         {
             Static.AppInfoStatic.currentPlayersInMatch = new List<PlayerView>();
             Static.AppInfoStatic.currentPlayersInMatch.Clear();
@@ -75,6 +77,22 @@ namespace RankTracker.ViewModels
                 Static.AppInfoStatic.currentPlayersInMatch.Add(p);
             }
             await Shell.Current.GoToAsync(nameof(CreateMatchView));
+        }
+
+        private bool Validate()
+        {
+            int value = 0;
+            foreach (var p in Players)
+            {
+                if (p.ischecked)
+                    value++;
+                
+            }
+            if (value > 1)
+                return true;
+            else
+                return false;
+
         }
         private async void OnCheck(object obj)
         {
