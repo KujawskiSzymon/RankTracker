@@ -9,8 +9,8 @@ namespace RankTracker.ViewModels
     {
         public AboutViewModel()
         {
-            Title = "About";
-            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://aka.ms/xamarin-quickstart"));
+            Title = "Credits";
+            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://github.com/KujawskiSzymon/RankTracker"));
         }
 
         public ICommand OpenWebCommand { get; }
