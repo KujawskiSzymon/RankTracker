@@ -11,7 +11,7 @@ ROADMAP
 
 [X] Create Match
 
-[] Matches history
+[X] Matches history
 
 [] SQL Database
 
