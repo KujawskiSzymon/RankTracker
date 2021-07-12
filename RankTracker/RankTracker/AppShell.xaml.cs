@@ -18,6 +18,8 @@ namespace RankTracker
             Routing.RegisterRoute(nameof(SelectPlayersPage), typeof(SelectPlayersPage));
             Routing.RegisterRoute(nameof(CreateMatchView), typeof(CreateMatchView));
             Routing.RegisterRoute(nameof(GamesPage), typeof(GamesPage));
+            Routing.RegisterRoute(nameof(MatchHistoryPage), typeof(MatchHistoryPage));
+            Routing.RegisterRoute(nameof(MatchDetailPage), typeof(MatchDetailPage));
         }
 
     }

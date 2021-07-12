@@ -7,6 +7,13 @@ namespace RankTracker.Models
     public class Match
     {
         public string Id { get; set; }
-        public List<Player> Players { get; set; }
+        public List<PlayerMatchInfo> Players { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string WinnnerName { get; set; }
+
+       
+
     }
 }

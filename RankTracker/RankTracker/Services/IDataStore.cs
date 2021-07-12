@@ -15,6 +15,8 @@ namespace RankTracker.Services
         Task<T> GetGameAsync(string id);
         Task<Player> GetPlayerAsync(Game game,string id);
         Task<Player> GetPlayerByNameAsync(Game game, string name);
+
+        Task<Match> GetMatchAsync(Game game, string id);
         Task<IEnumerable<T>> GetGamesAsync(bool forceRefresh = false);
     }
 }

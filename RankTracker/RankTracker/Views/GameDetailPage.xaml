@@ -7,6 +7,7 @@
         <ToolbarItem Text="Add Player" Command="{Binding AddPlayerCommand}" />
     </ContentPage.ToolbarItems>
     <StackLayout Spacing="20" Padding="15">
+        <Button Text="Matches History" Command="{Binding MatchHistoryCommand}"/>
         <Label Text="Players:" FontSize="Medium" />
         <AbsoluteLayout>
             <RefreshView x:DataType="local:GameDetailViewModel"  Command="{Binding LoadPlayersCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">

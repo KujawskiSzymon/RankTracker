@@ -40,30 +40,36 @@ namespace RankTracker.ViewModels
                 {
                     if (Convert.ToInt32(Players[i].points) > Convert.ToInt32(Players[j].points))
                     {
-                        EloRating(Players[i].Name, Players[j].Name,30,1);
+                        EloRating(Players[i].Name, Players[j].Name,K,1);
                     }
                     else if (Convert.ToInt32(Players[i].points) == Convert.ToInt32(Players[j].points))
                     {
-                        EloRating(Players[i].Name, Players[j].Name, 30, 0.5);
+                        EloRating(Players[i].Name, Players[j].Name, K, 0.5);
                     }
                     else
                     {
-                        EloRating(Players[i].Name, Players[j].Name, 30, -1);
+                        EloRating(Players[i].Name, Players[j].Name, K, -1);
                     }
                 }
             }
-            Match match = new Match() { Id = Guid.NewGuid().ToString(), Players = new List<Player>() };
+            Match match = new Match() { Id = Guid.NewGuid().ToString(), Players = new List<PlayerMatchInfo>() };
             foreach (var p in Players)
             {
                Player player = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame, p.Name);
                 player.Rank += player.RankRated;
                 PlayerHistory ph = new PlayerHistory() { Date = DateTime.UtcNow, RankHistory = player.RankRated };
-                player.RankRated = 0;
-                match.Players.Add(player);
-
                 player.PlayerHistory.Add(ph);
-              //  await GamesStore.UpdatePlayerAsync(player);
+                PlayerMatchInfo playerInfoForMatch = new PlayerMatchInfo() { PlayerName = player.Name, RankChange = player.RankRated.ToString() ,Points = Int32.Parse(p.points)};
+                player.RankRated = 0;
+
+                match.Players.Add(playerInfoForMatch);
+
+
+                //  await GamesStore.UpdatePlayerAsync(player);
             }
+            
+            match.Date = DateTime.UtcNow;
+            match.WinnnerName = setWinner(Players);
             Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
             game.Matches.Add(match);
             await GamesStore.UpdateGameAsync(game);
@@ -140,6 +146,21 @@ namespace RankTracker.ViewModels
                 K = 10;
             }
             return K;
+        }
+
+        private string setWinner(ObservableCollection<PlayerMatchCreate> Players)
+        {
+            int points = int.MinValue;
+            string winner = "";
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Int32.Parse(Players[i].points) > points)
+                {
+                    winner = Players[i].Name;
+                    points = Int32.Parse(Players[i].points);
+                }
+            }
+            return winner;
         }
 
     }

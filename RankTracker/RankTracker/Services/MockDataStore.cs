@@ -74,6 +74,10 @@ namespace RankTracker.Services
         {
             return await Task.FromResult(game.Players.FirstOrDefault(s => s.Id == id));
         }
+        public async Task<Match> GetMatchAsync(Game game, string id)
+        {
+            return await Task.FromResult(game.Matches.FirstOrDefault(s => s.Id == id));
+        }
         public async Task<Player> GetPlayerByNameAsync(Game game, string name)
         {
             return await Task.FromResult(game.Players.FirstOrDefault(s => s.Name == name));
