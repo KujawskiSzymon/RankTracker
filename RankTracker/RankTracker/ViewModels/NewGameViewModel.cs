@@ -1,4 +1,5 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -48,13 +49,13 @@ namespace RankTracker.ViewModels
         {
             Game newItem = new Game()
             {
-                Id = Guid.NewGuid().ToString(),
-                Name = Name,
-                Players = new List<Player>(),
-                Matches = new List<Match>()
+                GUID = Guid.NewGuid().ToString(),
+                Name = Name
             };
+            GameDataStore database = await GameDataStore.Instance;
+            await database.SaveGameAsync(newItem);
 
-            await GamesStore.AddGameAsync(newItem);
+            //await GamesStore.AddGameAsync(newItem); delete after sql
 
             // This will pop the current page off the navigation stack
             await Shell.Current.GoToAsync("..");

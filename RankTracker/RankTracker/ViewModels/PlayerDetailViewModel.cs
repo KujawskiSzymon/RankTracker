@@ -1,4 +1,5 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,12 +13,12 @@ namespace RankTracker.ViewModels
     [QueryProperty(nameof(PlayerId), nameof(PlayerId))]
    public class PlayerDetailViewModel : BaseViewModel
     {
-        private string playerid;
+        private int playerid;
         private string name;
         
         
         public ObservableCollection<PlayerHistory> PlayerHistory { get;  }
-        public string Id { get; set; }
+        public int Id { get; set; }
         public Command LoadPlayerHistoryCommand { get; set; }
 
         public PlayerDetailViewModel()
@@ -31,7 +32,7 @@ namespace RankTracker.ViewModels
             set => SetProperty(ref name, value);
         }
 
-        public string PlayerId
+        public int PlayerId
         {
             get
             {
@@ -50,13 +51,11 @@ namespace RankTracker.ViewModels
 
             try
             {
-                PlayerHistory.Clear();   
-                Player p = await GamesStore.GetPlayerAsync(Static.AppInfoStatic.currentGame, Static.AppInfoStatic.currentPlayer.Id);
-                var playerhistory = p.PlayerHistory;
-                foreach( var ph in playerhistory)
-                {
-                    PlayerHistory.Add(ph);
-                }
+                PlayerHistory.Clear();
+                GameDataStore dataStore = await GameDataStore.Instance;
+                Player player = await dataStore.GetPlayerAsync(PlayerId);
+                
+                
 
 
             }
@@ -75,17 +74,18 @@ namespace RankTracker.ViewModels
             IsBusy = true;
         }
 
-        public async void LoadPlayerId(string itemId)
+        public async void LoadPlayerId(int itemId)
         {
             try
             {
-               
-                var item = await GamesStore.GetPlayerAsync(Static.AppInfoStatic.currentGame, itemId);
-                Id = item.Id;
-                Name = item.Name;
-                Static.AppInfoStatic.currentPlayer = item;
-                var playerhistory = item.PlayerHistory;
-                foreach (var ph in playerhistory)
+
+                GameDataStore dataStore = await GameDataStore.Instance;
+                Player player = await dataStore.GetPlayerAsync(itemId);
+                Id = player.Id;
+                Name = player.Name;
+                Static.AppInfoStatic.currentPlayer = player;
+                List<PlayerHistory> playerHistory = await dataStore.GetPlayerHistoryAsync(itemId);
+                foreach (var ph in playerHistory)
                 {
                     PlayerHistory.Add(ph);
                 }

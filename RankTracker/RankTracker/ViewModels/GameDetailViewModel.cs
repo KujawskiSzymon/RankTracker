@@ -1,4 +1,5 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
 using RankTracker.Views;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,10 @@ namespace RankTracker.ViewModels
     [QueryProperty(nameof(GameId), nameof(GameId))]
     public class GameDetailViewModel : BaseViewModel
     {
-        private string gameId;
+        private int gameId;
         private string name;
         private ObservableCollection<Player> players;
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         public Command AddPlayerCommand { get; }
         public Command CreateMatchCommand { get; }
@@ -46,7 +47,7 @@ namespace RankTracker.ViewModels
             set => SetProperty(ref players, value);
         }
 
-        public string GameId
+        public int GameId
         {
             get
             {
@@ -67,8 +68,8 @@ namespace RankTracker.ViewModels
             try
             {
                 Players.Clear();
-                Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
-                var players = game.Players;
+                GameDataStore dataStore = await GameDataStore.Instance; 
+                var players = await dataStore.GetPlayersAsync(Static.AppInfoStatic.currentGame.Id);
                 foreach (var p in players)
                 {
                     Players.Add(p);
@@ -99,24 +100,26 @@ namespace RankTracker.ViewModels
             await Shell.Current.GoToAsync($"{nameof(PlayerDetailPage)}?{nameof(PlayerDetailViewModel.PlayerId)}={item.Id}");
         }
 
-        public async void LoadGameId(string itemId)
+        public async void LoadGameId(int itemId)
         {
             try
             {
                 Players.Clear();
-                var item = await GamesStore.GetGameAsync(itemId);
-                Id = item.Id;
-                Name = item.Name;
-               var p = item.Players;
-                foreach (var player in p)
+                GameDataStore dataStore = await GameDataStore.Instance;
+                var players = await dataStore.GetPlayersAsync(itemId);
+                foreach (var p in players)
                 {
-                    Players.Add(player);
+                    Players.Add(p);
                 }
-                Static.AppInfoStatic.currentGame = item;
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Failed to Load Item");
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
         private async void OnAddPlayer(object obj)

@@ -1,4 +1,5 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
 using RankTracker.Views;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ namespace RankTracker.ViewModels
     [QueryProperty(nameof(GameId), nameof(GameId))]
     public class SelectPlayersViewModel : BaseViewModel
     {
-        private string gameId;
+        private int gameId;
         private ObservableCollection<PlayerView> players;
-        public string Id { get; set; }
+        public int Id { get; set; }
         public Command CreateMatchCommand { get; }
 
         public Command CheckPlayerCommand { get; }
@@ -27,7 +28,7 @@ namespace RankTracker.ViewModels
                     (_, __) => CreateMatchCommand.ChangeCanExecute();
             
         }
-        public string GameId
+        public int GameId
         {
             get
             {
@@ -47,15 +48,16 @@ namespace RankTracker.ViewModels
             set => SetProperty(ref players, value);
         }
 
-        public async void LoadGameId(string itemId)
+        public async void LoadGameId(int itemId)
         {
             try
             {
                 Players.Clear();
-                var item = await GamesStore.GetGameAsync(itemId);
-                Id = item.Id;
-                var p = item.Players;
-                foreach (var player in p)
+                GameDataStore database = await GameDataStore.Instance;
+                var item = await database.GetPlayersAsync(itemId);
+                
+                
+                foreach (var player in item)
                 {
                     PlayerView pv = new PlayerView() { id = player.Id, ischecked = false, name = player.Name };
                     Players.Add(pv);

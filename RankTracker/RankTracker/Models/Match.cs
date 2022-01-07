@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,10 @@ namespace RankTracker.Models
 {
     public class Match
     {
-        public string Id { get; set; }
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public int GameId { get; set; }
+        [Ignore]
         public List<PlayerMatchInfo> Players { get; set; }
 
         public DateTime Date { get; set; }

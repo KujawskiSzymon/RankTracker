@@ -6,7 +6,7 @@ namespace RankTracker.Models
 {
     public class PlayerView
     {
-        public string id { get; set; }
+        public int id { get; set; }
         public string name { get; set; }
 
         public bool ischecked { get; set; }

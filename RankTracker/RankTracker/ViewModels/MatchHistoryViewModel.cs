@@ -1,4 +1,6 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
+using RankTracker.Static;
 using RankTracker.Views;
 using System;
 using System.Collections.Generic;
@@ -34,13 +36,12 @@ namespace RankTracker.ViewModels
             try
             {
                 Matches.Clear();
-                Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
-                var matches = game.Matches;
-                foreach (var p in matches)
+                GameDataStore database = await GameDataStore.Instance;
+                List<Match> matches = await database.GetMatchesAsync(AppInfoStatic.currentGame.Id);
+                foreach(var m in matches)
                 {
-                    Matches.Add(p);
+                    Matches.Add(m);
                 }
-
             }
             catch (Exception ex)
             {

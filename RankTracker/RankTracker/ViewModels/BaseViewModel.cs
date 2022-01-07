@@ -10,7 +10,7 @@ namespace RankTracker.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Game> GamesStore => DependencyService.Get<IDataStore<Game>>();
+
 
         bool isBusy = false;
         public bool IsBusy

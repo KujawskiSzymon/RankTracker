@@ -1,4 +1,6 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
+using RankTracker.Static;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -55,13 +57,14 @@ namespace RankTracker.ViewModels
             {
             Player newItem = new Player()
             {
-                Id = Guid.NewGuid().ToString(),
+
                 Name = Name,
                 Rank = Int32.Parse(Rank),
-                PlayerHistory = new List<PlayerHistory>()
+                GameId = AppInfoStatic.currentGame.Id
                 };
-              
-                await GamesStore.AddPlayerAsync(game,newItem);
+            GameDataStore database = await GameDataStore.Instance;
+            await database.SavePlayerAsync(newItem);
+            
 
                 // This will pop the current page off the navigation stack
                 await Shell.Current.GoToAsync("..");

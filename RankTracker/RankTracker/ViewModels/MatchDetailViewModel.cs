@@ -1,4 +1,5 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,8 +12,8 @@ namespace RankTracker.ViewModels
     [QueryProperty(nameof(MatchId), nameof(MatchId))]
     public class MatchDetailViewModel : BaseViewModel
     {
-        private string matchId;
-        public string Id { get; set; }
+        private int matchId;
+        public int Id { get; set; }
         private ObservableCollection<PlayerMatchInfo> matches;
 
         public MatchDetailViewModel()
@@ -26,7 +27,7 @@ namespace RankTracker.ViewModels
             set => SetProperty(ref matches, value);
         }
 
-        public string MatchId
+        public int MatchId
         {
             get
             {
@@ -40,20 +41,21 @@ namespace RankTracker.ViewModels
             }
         }
 
-        public async void LoadMatchId(string itemId)
+        public async void LoadMatchId(int itemId)
         {
             try
             {
                 Matches.Clear();
-                Match item = await GamesStore.GetMatchAsync(Static.AppInfoStatic.currentGame,itemId);
-                Id = item.Id;
+                GameDataStore dataStore = await GameDataStore.Instance;
+                Match item = await dataStore.GetMatchAsync(itemId);
+                List<PlayerMatchInfo> pmi = await dataStore.GetPlayerMatchInfosAsync(item.Id);
+
                 
-                var p = item.Players;
-                foreach (var player in p)
+                foreach (var player in pmi)
                 {
                     Matches.Add(player);
                 }
-                
+
             }
             catch (Exception)
             {

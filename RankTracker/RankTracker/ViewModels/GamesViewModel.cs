@@ -1,6 +1,9 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
+using RankTracker.Static;
 using RankTracker.Views;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -35,7 +38,8 @@ namespace RankTracker.ViewModels
             try
             {
                 Games.Clear();
-                var games = await GamesStore.GetGamesAsync(true);
+                GameDataStore dataStore = await GameDataStore.Instance;
+                List<Game> games = await dataStore.GetGamesAsync();
                 foreach (var item in games)
                 {
                     Games.Add(item);
@@ -74,6 +78,7 @@ namespace RankTracker.ViewModels
 
         async void OnGameSelected(Game item)
         {
+            AppInfoStatic.currentGame = item;
             if (item == null)
                 return;
 

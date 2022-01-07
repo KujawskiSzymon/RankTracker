@@ -1,8 +1,12 @@
 ﻿using RankTracker.Models;
+using RankTracker.Services;
+using RankTracker.Static;
 using RankTracker.Views;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Text;
 using Xamarin.Forms;
 
@@ -16,12 +20,12 @@ namespace RankTracker.ViewModels
         public CreateMatchViewModel()
         {
             players = new ObservableCollection<PlayerMatchCreate>();
-            foreach(var p in Static.AppInfoStatic.currentPlayersInMatch)
+            foreach (var p in Static.AppInfoStatic.currentPlayersInMatch)
             {
-                PlayerMatchCreate player = new PlayerMatchCreate() { Name = p.name, points = "0" };
+                PlayerMatchCreate player = new PlayerMatchCreate() { Name = p.name, points = "0", Id =p.id };
                 players.Add(player);
             }
-            CreateMatchCommand = new Command(OnCreateMatch,Validate);
+            CreateMatchCommand = new Command(OnCreateMatch, Validate);
         }
 
         public ObservableCollection<PlayerMatchCreate> Players
@@ -33,53 +37,55 @@ namespace RankTracker.ViewModels
         private async void OnCreateMatch()
         {
             int K = setK();
-           // Static.AppInfoStatic.PlayersInMatch = new List<Player>();
-            for (int i = 0; i < Players.Count;i++)
+            Static.AppInfoStatic.currentPlayersInMatch = new List<PlayerView>();
+            for (int i = 0; i < Players.Count; i++)
             {
                 for (int j = i + 1; j < Players.Count; j++)
                 {
                     if (Convert.ToInt32(Players[i].points) > Convert.ToInt32(Players[j].points))
                     {
-                        EloRating(Players[i].Name, Players[j].Name,K,1);
+                        EloRating(Players[i].Id, Players[j].Id, K, 1);
                     }
                     else if (Convert.ToInt32(Players[i].points) == Convert.ToInt32(Players[j].points))
                     {
-                        EloRating(Players[i].Name, Players[j].Name, K, 0.5);
+                        EloRating(Players[i].Id, Players[j].Id, K, 0.5);
                     }
                     else
                     {
-                        EloRating(Players[i].Name, Players[j].Name, K, -1);
+                        EloRating(Players[i].Id, Players[j].Id, K, -1);
                     }
                 }
             }
-            Match match = new Match() { Id = Guid.NewGuid().ToString(), Players = new List<PlayerMatchInfo>() };
-            foreach (var p in Players)
-            {
-               Player player = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame, p.Name);
-                player.Rank += player.RankRated;
-                PlayerHistory ph = new PlayerHistory() { Date = DateTime.UtcNow, RankHistory = player.RankRated };
-                player.PlayerHistory.Add(ph);
-                PlayerMatchInfo playerInfoForMatch = new PlayerMatchInfo() { PlayerName = player.Name, RankChange = player.RankRated.ToString() ,Points = Int32.Parse(p.points)};
-                player.RankRated = 0;
-
-                match.Players.Add(playerInfoForMatch);
-
-
-                //  await GamesStore.UpdatePlayerAsync(player);
-            }
-            
+            GameDataStore database = await GameDataStore.Instance;
+            Match match = new Match() { Players = new List<PlayerMatchInfo>() };
             match.Date = DateTime.UtcNow;
             match.WinnnerName = setWinner(Players);
-            Game game = await GamesStore.GetGameAsync(Static.AppInfoStatic.currentGame.Id);
-            game.Matches.Add(match);
-            await GamesStore.UpdateGameAsync(game);
+            match.GameId = AppInfoStatic.currentGame.Id;
+            await database.SaveMatchAsync(match);
+            List<Match> matches = database.GetMatchesAsync(AppInfoStatic.currentGame.Id).Result;
+
+            Match thisMatch = matches[(matches.Count-1)];
+            foreach (var p in Players)
+            {
+                
+                Player player = database.GetPlayerAsync(p.Id).Result;
+                player.Rank += player.RankRated;
+                PlayerHistory ph = new PlayerHistory() { Date = DateTime.UtcNow, RankHistory = player.RankRated, PlayerId = player.Id };
+                PlayerMatchInfo playerInfoForMatch = new PlayerMatchInfo() { PlayerName = player.Name, RankChange = player.RankRated.ToString(), Points = Int32.Parse(p.points),MatchId= thisMatch.Id};
+                player.RankRated = 0;
+                await database.SavePlayerMatchInfoAsync(playerInfoForMatch);
+                await database.SavePlayerAsync(player);
+                await database.SavePlayerHistoryAsync(ph);
+            }
+
+            
             await Shell.Current.GoToAsync("../..");
         }
         private bool Validate()
         {
             int value = 0;
-            foreach(var p in Players)
-                
+            foreach (var p in Players)
+
             {
                 if (Int32.TryParse(p.points, out value))
                     continue;
@@ -87,77 +93,89 @@ namespace RankTracker.ViewModels
                     return false;
 
             }
-           
-                return true;
+
+            return true;
 
         }
 
-        private async void EloRating(string playerNameA,string playerNameB,int K, double win)
+        private async void EloRating(int playerAid, int playerBid, int K, double win)
         {
-            Player PlayerA = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame,playerNameA);
-            Player PlayerB = await GamesStore.GetPlayerByNameAsync(Static.AppInfoStatic.currentGame,playerNameB);
-            double ProbPlayerA = Probability(PlayerA.Rank,PlayerB.Rank);
-            double ProbPlayerB = Probability(PlayerB.Rank, PlayerA.Rank);
+            GameDataStore database = await GameDataStore.Instance;
+            Player playera = await database.GetPlayerAsync(playerAid);
+            Player playerb = await database.GetPlayerAsync(playerBid);
+            double probplayera = Probability(playera.Rank, playerb.Rank);
+            double probplayerb = Probability(playerb.Rank, playera.Rank);
 
             if (win == 1)
             {
-                double rankRatedA =  K * (1 - ProbPlayerA);
-                double rankRatedB =   K * (0 - ProbPlayerB);
-                PlayerA.RankRated += Convert.ToInt32(rankRatedA);
-                PlayerB.RankRated += Convert.ToInt32(rankRatedB);
+                double rankrateda = K * (1 - probplayera);
+                double rankratedb = K * (0 - probplayerb);
+                if (rankrateda == 0)
+                    rankrateda = 1;
+                if (rankratedb == 0)
+                    rankratedb = -1;
+                playera.RankRated += Convert.ToInt32(rankrateda);
+                playerb.RankRated += Convert.ToInt32(rankratedb);
             }
-            else if (win == 0.5) {
-                double rankRatedA =  K * (0.5 - ProbPlayerA);
-                double rankRatedB = K * (0.5 - ProbPlayerB);
-                PlayerA.RankRated += Convert.ToInt32(rankRatedA);
-                PlayerB.RankRated += Convert.ToInt32(rankRatedB);
+            else if (win == 0.5)
+            {
+                double rankrateda = K * (0.5 - probplayera);
+                double rankratedb = K * (0.5 - probplayerb);
+                playera.RankRated += Convert.ToInt32(rankrateda);
+                playerb.RankRated += Convert.ToInt32(rankratedb);
             }
             else
             {
-                double rankRatedA =  K * (0 - ProbPlayerA);
-                double rankRatedB =  K * (1 - ProbPlayerB);
-                PlayerA.RankRated += Convert.ToInt32(rankRatedA);
-                PlayerB.RankRated += Convert.ToInt32(rankRatedB);
+                double rankrateda = K * (0 - probplayera);
+                double rankratedb = K * (1 - probplayerb);
+                if (rankrateda == 0)
+                    rankrateda = -1;
+                if (rankratedb == 0)
+                    rankratedb = 1;
+                playera.RankRated += Convert.ToInt32(rankrateda);
+                playerb.RankRated += Convert.ToInt32(rankratedb);
             }
+            await database.SavePlayerAsync(playera);
+            await database.SavePlayerAsync(playerb);
         }
 
-        private double Probability(double rankA, double rankB)
+        private double Probability(double ranka, double rankb)
         {
-            double prob = 1.0 * 1.0 / ( 1+ 1.0 * Math.Pow(10, 1.0 * (rankB - rankA) / 400));
+            double prob = 1.0 * 1.0 / (1 + 1.0 * Math.Pow(10, 1.0 * (rankb - ranka) / 400));
             return prob;
         }
         private int setK()
         {
-            int K;
-            if (Players.Count < 3)
+            int k;
+            if (players.Count < 3)
             {
-                K = 30;
+                k = 30;
             }
-            else if (Players.Count >= 2 && Players.Count < 6)
+            else if (players.Count >= 2 && players.Count < 6)
             {
-                K = 24;
+                k = 24;
             }
-            else if (Players.Count >= 6 && Players.Count < 11)
+            else if (players.Count >= 6 && players.Count < 11)
             {
-                K = 18;
+                k = 18;
             }
             else
             {
-                K = 10;
+                k = 10;
             }
-            return K;
+            return k;
         }
 
-        private string setWinner(ObservableCollection<PlayerMatchCreate> Players)
+        private string setWinner(ObservableCollection<PlayerMatchCreate> players)
         {
             int points = int.MinValue;
             string winner = "";
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                if (Int32.Parse(Players[i].points) > points)
+                if (Int32.Parse(players[i].points) > points)
                 {
-                    winner = Players[i].Name;
-                    points = Int32.Parse(Players[i].points);
+                    winner = players[i].Name;
+                    points = Int32.Parse(players[i].points);
                 }
             }
             return winner;
@@ -165,3 +183,4 @@ namespace RankTracker.ViewModels
 
     }
 }
+    
