@@ -7,8 +7,6 @@ namespace RankTracker.Models
 {
     public class Game
     {
-        
-        public string GUID { get; set; }
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Name { get; set; }

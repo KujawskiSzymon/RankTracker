@@ -2,25 +2,33 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:RankTracker.ViewModels" xmlns:model="clr-namespace:RankTracker.Models"
              x:Class="RankTracker.Views.MatchHistoryPage"
-             Title="Match History">
+             Title="Matches History">
 
     <ContentPage.Content>
         <StackLayout>
-            <RefreshView x:DataType="local:MatchHistoryViewModel" Command="{Binding LoadMatchesCommand}">
+            <RefreshView IsRefreshing="False" x:DataType="local:MatchHistoryViewModel" Command="{Binding LoadMatchesCommand}">
                 <CollectionView x:Name="PlayersListView" 
                 ItemsSource="{Binding Matches}"
                 SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Padding="10" x:DataType="model:Match" >
+                                <Label Text="Match Winner:" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" />
                                 <Label Text="{Binding WinnnerName}" 
+                            LineBreakMode="NoWrap"  
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" TextColor="DarkOrange"/>
+                                <Label Text="Date:" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16" />
                                 <Label Text="{Binding Date}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
+                            FontSize="16" TextColor="DarkOrange"/>
                                 <StackLayout.GestureRecognizers>
                                     <TapGestureRecognizer 
                                 NumberOfTapsRequired="1"

@@ -17,9 +17,9 @@ namespace RankTracker.Services
             var instance = new GameDataStore();
             CreateTableResult result = await Database.CreateTableAsync<Game>();
             CreateTableResult resultPlayer = await Database.CreateTableAsync<Player>();
-            CreateTableResult resultPlayer2 = await Database.CreateTableAsync<PlayerHistory>();
-            CreateTableResult resultPlayer3 = await Database.CreateTableAsync<Match>();
-            CreateTableResult resultPlayer4 = await Database.CreateTableAsync<PlayerMatchInfo>();
+            CreateTableResult resultPlayerHistory = await Database.CreateTableAsync<PlayerHistory>();
+            CreateTableResult resultMatch = await Database.CreateTableAsync<Match>();
+            CreateTableResult resultMatchInfo = await Database.CreateTableAsync<PlayerMatchInfo>();
             return instance;
         });
 
@@ -32,16 +32,7 @@ namespace RankTracker.Services
             return Database.Table<Game>().ToListAsync();
         }
 
-        public Task<List<Game>> GetItemsNotDoneAsync()
-        {
-            // SQL queries are also possible
-            return Database.QueryAsync<Game>("SELECT * FROM [TodoItem] WHERE [Done] = 0");
-        }
 
-        public Task<Game> GetGameAsync(int id)
-        {
-            return Database.Table<Game>().Where(i => i.Id == id).FirstOrDefaultAsync();
-        }
 
         public Task<Match> GetMatchAsync(int idmatch)
         {
@@ -88,7 +79,8 @@ namespace RankTracker.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("No Game was found");
+                Debug.WriteLine(ex.Message);
+                throw new Exception("Error in reading Player match info");
             }
 
 

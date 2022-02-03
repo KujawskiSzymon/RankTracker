@@ -47,7 +47,7 @@ namespace RankTracker.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                Debug.WriteLine(ex.Message);
             }
             finally
             {

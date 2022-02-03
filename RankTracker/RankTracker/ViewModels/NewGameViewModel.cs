@@ -49,7 +49,6 @@ namespace RankTracker.ViewModels
         {
             Game newItem = new Game()
             {
-                GUID = Guid.NewGuid().ToString(),
                 Name = Name
             };
             GameDataStore database = await GameDataStore.Instance;

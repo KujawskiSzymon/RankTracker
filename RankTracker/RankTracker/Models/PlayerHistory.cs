@@ -12,5 +12,6 @@ namespace RankTracker.Models
          public int PlayerId { get; set; }
         public int RankHistory { get; set; }
         public DateTime Date { get; set; }
+        public string fontColor { get; set; }
     }
 }

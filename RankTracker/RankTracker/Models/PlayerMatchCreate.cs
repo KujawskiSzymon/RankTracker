@@ -10,5 +10,10 @@ namespace RankTracker.Models
         public string Name { get; set; }
         public int Id { get; set; }
         public string points { get; set; }
+
+        public int GetPoints()
+        {
+            return Int32.Parse(points);
+        }
     }
 }

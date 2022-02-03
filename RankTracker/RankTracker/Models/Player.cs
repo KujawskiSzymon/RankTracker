@@ -11,13 +11,11 @@ namespace RankTracker.Models
         public int Id { get; set; }
         public int GameId { get; set; }
         
-        public string GUID { get; set; }
 
         public string Name { get; set; }
         
         public int Rank { get; set; }
 
-        public string Title { get; set; }
 
         public int RankRated { get; set; }
         [Ignore]

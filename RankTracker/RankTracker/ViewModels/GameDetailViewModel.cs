@@ -33,6 +33,7 @@ namespace RankTracker.ViewModels
             LoadPlayersCommand = new Command(async () => await ExecuteLoadGamesCommand());
             MatchHistoryCommand = new Command(OnCheckHistory);
             PlayerTapped = new Command<Player>(OnPlayerSelected);
+            Name = Static.AppInfoStatic.currentGame.Name;
         }
 
         public string Name

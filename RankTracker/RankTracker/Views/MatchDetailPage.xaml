@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:model="clr-namespace:RankTracker.Models" xmlns:local="clr-namespace:RankTracker.ViewModels"
-             x:Class="RankTracker.Views.MatchDetailPage">
+             x:Class="RankTracker.Views.MatchDetailPage"
+              Title="Match Details">
 <StackLayout Spacing="20" Padding="15">
        
-        <Label Text="Match Details:" FontSize="Medium" />
+  
   
             <RefreshView x:DataType="local:MatchDetailViewModel"   IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
                 <CollectionView x:Name="PlayersListView"
@@ -13,19 +14,30 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Padding="10" x:DataType="model:PlayerMatchInfo">
-                            
+                                <Label Text="Player Name:" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" />
                                 <Label Text="{Binding PlayerName}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" TextColor="DarkOrange" />
+                            <Label Text="Points: " 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16" />
                             <Label Text="{Binding Points}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" TextColor="DarkOrange" />
+                            <Label Text="Rank Change:" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16" />
                             <Label Text="{Binding RankChange}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
+                            FontSize="16" TextColor="DarkOrange" />
                         </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

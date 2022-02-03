@@ -13,14 +13,16 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout Padding="10" x:DataType="model:PlayerHistory">
+                            <Label Text="Date:" FontSize="Body"/>
                             <Label Text="{Binding Date}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
+                            FontSize="16"  TextColor="DarkOrange"/>
+                            <Label Text="Rank Gain: " FontSize="Body"/>
                             <Label Text="{Binding RankHistory}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
+                            FontSize="16" TextColor="{Binding fontColor}" />
                             
                         </StackLayout>
                     </DataTemplate>

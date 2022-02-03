@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:model="clr-namespace:RankTracker.Models" xmlns:local="clr-namespace:RankTracker.ViewModels"
              x:Class="RankTracker.Views.SelectPlayersPage"
-             Title="Select Players">
+             Title="Create Match">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Create Match" Command="{Binding CreateMatchCommand}" />
     </ContentPage.ToolbarItems>
